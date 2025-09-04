@@ -1,0 +1,13 @@
+package ua.hudyma.service;
+
+import lombok.RequiredArgsConstructor;
+import lombok.extern.log4j.Log4j2;
+import org.springframework.stereotype.Service;
+import ua.hudyma.repository.PilotRepository;
+
+@Service
+@RequiredArgsConstructor
+@Log4j2
+public class PilotService {
+    private final PilotRepository pilotRepository;
+}
