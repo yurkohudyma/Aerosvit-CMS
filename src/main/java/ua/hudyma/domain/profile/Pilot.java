@@ -14,6 +14,7 @@ public class Pilot {
     private Profile profile;
     @Embedded
     private Address address;
+    @Enumerated(value = EnumType.STRING)
     private PilotType pilotType;
 
 }
