@@ -7,6 +7,6 @@ public enum VisaType {
     WORK,
     TRANSIT,
     DIPLOMATIC,
-    OTHER
+    CREW
 }
 

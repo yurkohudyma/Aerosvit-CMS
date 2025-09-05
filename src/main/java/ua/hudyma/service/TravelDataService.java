@@ -8,26 +8,22 @@ import ua.hudyma.domain.visa.TravelData;
 import ua.hudyma.domain.visa.dto.TravelDataRequestDto;
 import ua.hudyma.repository.PilotRepository;
 
-import java.security.SecureRandom;
-import java.time.LocalDate;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Random;
-import java.util.stream.Collectors;
 
-import static ua.hudyma.util.PassportIdGenerator.generatePassportId;
+import static ua.hudyma.util.PassportDataGenerator.generateIssuedOn;
+import static ua.hudyma.util.PassportDataGenerator.generatePassportId;
 
 @Service
 @RequiredArgsConstructor
 public class TravelDataService {
 
     private final PilotRepository pilotRepository;
-    private final Random random = new Random();
 
     public void addTravelData(TravelDataRequestDto[] travelDataDtos) {
         List<Pilot> pilots = Arrays.stream(travelDataDtos)
                 .map(this::generateTravelData)
-                .collect(Collectors.toList());
+                .toList();
         pilotRepository.saveAll(pilots);
     }
 
@@ -55,11 +51,5 @@ public class TravelDataService {
         travelData.setIssuedOn(generateIssuedOn());
         travelData.setExpiresAt(travelData.getIssuedOn().plusYears(10));
         return pilot;
-    }
-
-    private LocalDate generateIssuedOn() {
-        var today = LocalDate.now();
-        int daysBack = new SecureRandom().nextInt(365 * 10);
-        return today.minusDays(daysBack);
     }
 }

@@ -29,4 +29,6 @@ public class TravelDataController {
         travelDataService.generateTravelData();
         return ResponseEntity.status(ACCEPTED).build();
     }
+
+
 }

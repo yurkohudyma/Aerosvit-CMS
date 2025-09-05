@@ -7,15 +7,15 @@ import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Service;
 import ua.hudyma.domain.profile.Address;
 import ua.hudyma.domain.profile.Pilot;
-import ua.hudyma.domain.profile.PilotType;
 import ua.hudyma.domain.profile.Profile;
-import ua.hudyma.enums.Country;
 import ua.hudyma.repository.PilotRepository;
 
-import java.security.SecureRandom;
 import java.util.List;
 import java.util.Locale;
 import java.util.stream.Stream;
+
+import static ua.hudyma.util.PassportDataGenerator.getRandomCountry;
+import static ua.hudyma.util.PassportDataGenerator.getRandomPilotType;
 
 @Service
 @RequiredArgsConstructor
@@ -62,17 +62,5 @@ public class PilotService {
         return pilot;
     }
 
-    private static PilotType getRandomPilotType() {
-        var values = PilotType.values();
-        var enumSize = values.length;
-        var index = new SecureRandom().nextInt(enumSize);
-        return values[index];
-    }
 
-    private static Country getRandomCountry() {
-        var values = Country.values();
-        var enumSize = values.length;
-        var index = new SecureRandom().nextInt(enumSize);
-        return values[index];
-    }
 }

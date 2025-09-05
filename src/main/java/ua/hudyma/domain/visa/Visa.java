@@ -17,8 +17,13 @@ public class Visa {
     @Enumerated(value = EnumType.STRING)
     private Country emittedByCountry;
     @Enumerated(value = EnumType.STRING)
+    private VisaType visaType;
+    @Enumerated(value = EnumType.STRING)
     @Column(nullable = false)
     private VisaStatus visaStatus;
+
+    @Column(nullable = false)
+    private LocalDate issuedOn;
     @Column(nullable = false)
     private LocalDate expiresOn;
     @ManyToOne
