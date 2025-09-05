@@ -2,6 +2,7 @@ package ua.hudyma.domain.profile;
 
 import jakarta.persistence.*;
 import lombok.Data;
+import ua.hudyma.domain.visa.TravelData;
 
 @Entity
 @Table(name = "pilots")
@@ -16,5 +17,9 @@ public class Pilot {
     private Address address;
     @Enumerated(value = EnumType.STRING)
     private PilotType pilotType;
+    @OneToOne(mappedBy = "pilot",
+            cascade = CascadeType.ALL,
+            fetch = FetchType.LAZY)
+    private TravelData travelData;
 
 }
