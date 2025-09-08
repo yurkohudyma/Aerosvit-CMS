@@ -15,7 +15,7 @@ import ua.hudyma.repository.PilotRepository;
 import java.util.Locale;
 import java.util.stream.Stream;
 
-import static ua.hudyma.util.PassportDataGenerator.getRandomEnum;
+import static ua.hudyma.util.IdGenerator.getRandomEnum;
 
 @Service
 @RequiredArgsConstructor
