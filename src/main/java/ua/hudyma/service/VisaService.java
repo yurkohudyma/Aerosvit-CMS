@@ -5,16 +5,14 @@ import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ua.hudyma.domain.visa.Visa;
+import ua.hudyma.domain.visa.VisaStatus;
 import ua.hudyma.domain.visa.VisaType;
 import ua.hudyma.domain.visa.dto.VisaRequestDto;
+import ua.hudyma.enums.Country;
 import ua.hudyma.repository.TravelDataRepository;
 import ua.hudyma.repository.VisaRepository;
-import ua.hudyma.util.PassportDataGenerator;
-
-import javax.management.AttributeNotFoundException;
 
 import static ua.hudyma.domain.visa.EntriesNumber.MULTI;
-import static ua.hudyma.domain.visa.VisaType.CREW;
 import static ua.hudyma.util.PassportDataGenerator.*;
 
 @Service
@@ -38,13 +36,16 @@ public class VisaService {
         }
         visa.setVisaId(generatePassportId(0, 9));
         if (visaRequestDto.visaType() == null){
-            visa.setVisaType(CREW);
+            visa.setVisaType(getRandomEnum(
+                    VisaType.class));
         }
         if (visaRequestDto.emittedByCountry() == null) {
-            visa.setEmittedByCountry(getRandomCountry());
+            visa.setEmittedByCountry(getRandomEnum(
+                    Country.class));
         }
         if (visaRequestDto.visaStatus() == null) {
-            visa.setVisaStatus(getRandomVisaStatus());
+            visa.setVisaStatus(getRandomEnum(
+                    VisaStatus.class));
         }
         if (visaRequestDto.issuedOn() == null){
             visa.setIssuedOn(generateIssuedOn());

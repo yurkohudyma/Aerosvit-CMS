@@ -21,7 +21,6 @@ public class Visa {
     @Enumerated(value = EnumType.STRING)
     @Column(nullable = false)
     private VisaStatus visaStatus;
-
     @Column(nullable = false)
     private LocalDate issuedOn;
     @Column(nullable = false)

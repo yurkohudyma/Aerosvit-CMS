@@ -4,12 +4,14 @@ import jakarta.persistence.*;
 import lombok.Data;
 import ua.hudyma.domain.visa.TravelData;
 
+import static jakarta.persistence.GenerationType.IDENTITY;
+
 @Entity
 @Table(name = "pilots")
 @Data
 public class Pilot {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = IDENTITY)
     private Long id;
     @Embedded
     private Profile profile;

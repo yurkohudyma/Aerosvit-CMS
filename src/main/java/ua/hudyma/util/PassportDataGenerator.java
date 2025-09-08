@@ -1,15 +1,10 @@
 package ua.hudyma.util;
 
-import ua.hudyma.domain.profile.PilotType;
-import ua.hudyma.domain.visa.VisaStatus;
-import ua.hudyma.domain.visa.VisaType;
-import ua.hudyma.enums.Country;
-
 import java.security.SecureRandom;
 import java.time.LocalDate;
-import java.util.Random;
 
 public class PassportDataGenerator {
+    private final static SecureRandom secureRandom = new SecureRandom();
 
     public static LocalDate generateIssuedOn() {
         var today = LocalDate.now();
@@ -23,8 +18,9 @@ public class PassportDataGenerator {
     }
 
     private static String generateRandomUppercaseLetters(int length) {
-        return new Random()
-                .ints('A', 'Z' + 1)
+        return secureRandom
+                .ints('A',
+                        'Z' + 1)
                 .limit(length)
                 .collect(StringBuilder::new,
                         StringBuilder::appendCodePoint,
@@ -33,8 +29,9 @@ public class PassportDataGenerator {
     }
 
     private static String generateRandomDigits(int length) {
-        return new Random()
-                .ints('0', '9' + 1)
+        return secureRandom
+                .ints('0',
+                        '9' + 1)
                 .limit(length)
                 .collect(
                         StringBuilder::new,
@@ -43,31 +40,9 @@ public class PassportDataGenerator {
                 .toString();
     }
 
-    public static PilotType getRandomPilotType() {
-        var values = PilotType.values();
-        var enumSize = values.length;
-        var index = new SecureRandom().nextInt(enumSize);
-        return values[index];
-    }
-
-    public static Country getRandomCountry() {
-        var values = Country.values();
-        var enumSize = values.length;
-        var index = new SecureRandom().nextInt(enumSize);
-        return values[index];
-    }
-
-    public static VisaStatus getRandomVisaStatus(){
-        var values = VisaStatus.values();
-        var enumSize = values.length;
-        var index = new SecureRandom().nextInt(enumSize);
-        return values[index];
-    }
-
-    public static VisaType getRandomVisaType(){
-        var values = VisaType.values();
-        var enumSize = values.length;
-        var index = new SecureRandom().nextInt(enumSize);
+    public static <T extends Enum<T>> T getRandomEnum(Class<T> enumClass) {
+        T[] values = enumClass.getEnumConstants();
+        int index = secureRandom.nextInt(values.length);
         return values[index];
     }
 }

@@ -17,16 +17,22 @@ import static org.springframework.http.HttpStatus.CREATED;
 public class TravelDataController {
     private final TravelDataService travelDataService;
 
-    @PostMapping
+    /*@PostMapping
     public ResponseEntity<String> addTravelData (
             @RequestBody TravelDataRequestDto[] travelDataRequestDto){
         travelDataService.addTravelData (travelDataRequestDto);
         return ResponseEntity.status(CREATED).build();
+    }*/
+
+    @GetMapping("/generatePilotsTravelData")
+    public ResponseEntity<String> generateTravelDateForAllPilots (){
+        travelDataService.generatePilotTravelData();
+        return ResponseEntity.status(ACCEPTED).build();
     }
 
-    @GetMapping("/generateTravelDataForAll")
-    public ResponseEntity<String> generateTravelDateForAllPilots (){
-        travelDataService.generateTravelData();
+    @GetMapping("/generateCrewTravelData")
+    public ResponseEntity<String> generateTravelDateForAllCrew (){
+        travelDataService.generateCrewTravelData();
         return ResponseEntity.status(ACCEPTED).build();
     }
 

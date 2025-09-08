@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Data;
+import ua.hudyma.domain.profile.Crew;
 import ua.hudyma.domain.profile.Pilot;
 
 import java.time.LocalDate;
@@ -32,4 +33,8 @@ public class TravelData {
     @JoinColumn(name = "pilot_id")
     @JsonIgnore
     private Pilot pilot;
+    @OneToOne
+    @JoinColumn(name = "crew_id")
+    @JsonIgnore
+    private Crew crew;
 }
