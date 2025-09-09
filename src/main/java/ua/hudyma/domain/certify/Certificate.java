@@ -1,17 +1,24 @@
 package ua.hudyma.domain.certify;
 
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 import static jakarta.persistence.GenerationType.IDENTITY;
 
 @Entity
 @Table(name = "certificates")
 @Data
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
 public class Certificate {
     @Id
     @GeneratedValue(strategy = IDENTITY)
@@ -38,10 +45,10 @@ public class Certificate {
     private String notes;
     @Column(name = "created_at", updatable = false)
     @CreationTimestamp
-    private LocalDate createdAt;
+    private LocalDateTime createdAt;
     @Column(name = "updated_at")
     @UpdateTimestamp
-    private LocalDate updatedAt;
+    private LocalDateTime updatedAt;
     @ManyToOne
     @JoinColumn(name = "certificate_data_id")
     private CertificateData certificateData;

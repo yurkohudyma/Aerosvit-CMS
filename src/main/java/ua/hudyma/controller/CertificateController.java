@@ -1,13 +1,16 @@
 package ua.hudyma.controller;
 
 import lombok.RequiredArgsConstructor;
-import lombok.extern.java.Log;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import ua.hudyma.domain.certify.dto.CertsResponseDto;
 import ua.hudyma.service.CertificateService;
+
+import java.util.List;
 
 import static org.springframework.http.HttpStatus.CREATED;
 
@@ -22,5 +25,31 @@ public class CertificateController {
     public ResponseEntity<String> generateCertWhereMissing (){
         certificateService.addCertificateWhereMissing();
         return ResponseEntity.status(CREATED).build();
+    }
+
+    @GetMapping("/addOne")
+    public ResponseEntity<String> generateSingleCert (@RequestParam Long certDataId){
+        var certData = certificateService.getCertData(certDataId);
+        certificateService.addCertificate(certData);
+        return ResponseEntity.status(CREATED).build();
+    }
+
+    @GetMapping("/findActiveCrew")
+    public ResponseEntity<List<CertsResponseDto>> getAllActiveCrewCerts (){
+        return ResponseEntity.ok(certificateService.getAllActiveCrewCerts());
+    }
+
+    @GetMapping("/findExpiredCrew")
+    public ResponseEntity<List<CertsResponseDto>> getAllExpiredCrewCerts (){
+        return ResponseEntity.ok(certificateService.getAllExpiredCrewCerts());
+    }
+    @GetMapping("/findActivePilot")
+    public ResponseEntity<List<CertsResponseDto>> getAllActivePilotCerts (){
+        return ResponseEntity.ok(certificateService.getAllActivePilotCerts());
+    }
+
+    @GetMapping("/findExpiredPilot")
+    public ResponseEntity<List<CertsResponseDto>> getAllExpiredPilotCerts (){
+        return ResponseEntity.ok(certificateService.getAllExpiredPilotCerts());
     }
 }

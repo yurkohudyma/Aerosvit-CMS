@@ -5,8 +5,14 @@ import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ua.hudyma.domain.certify.*;
+import ua.hudyma.domain.certify.dto.CertsResponseDto;
 import ua.hudyma.repository.CertDataRepository;
 import ua.hudyma.repository.CertificateRepository;
+
+import java.time.LocalDate;
+import java.util.List;
+import java.util.function.Function;
+import java.util.function.Predicate;
 
 import static ua.hudyma.util.IdGenerator.*;
 
@@ -18,7 +24,7 @@ public class CertificateService {
     private final CertDataRepository certDataRepository;
 
     @Transactional
-    public void addCertificateWhereMissing (){
+    public void addCertificateWhereMissing() {
         var commonCertList = certDataRepository.findAll();
         commonCertList
                 .stream()
@@ -26,16 +32,84 @@ public class CertificateService {
                 .forEach(this::addCertificate);
     }
 
-    private void addCertificate(CertificateData certificateData) {
-        var certificate = new Certificate();
-        certificate.setCertType(getRandomEnum(CertificateType.class));
-        certificate.setCertCat(getRandomEnum(CertificateCategory.class));
-        certificate.setAircraftType(getRandomEnum(AircraftType.class));
-        certificate.setCertAuthority(getRandomEnum(CertifyAuthority.class));
-        certificate.setIssuedAt(generateIssuedOn());
+    public void addCertificate(CertificateData certificateData) {
+        var certificate = Certificate
+                .builder()
+                .certType(getRandomEnum(CertificateType.class))
+                .certCat(getRandomEnum(CertificateCategory.class))
+                .aircraftType(getRandomEnum(AircraftType.class))
+                .certAuthority(getRandomEnum(CertifyAuthority.class))
+                .issuedAt(generateIssuedOn())
+                .licenseNumber(generateId(3, 10))
+                .certificateData(certificateData)
+                .build();
         certificate.setExpiresAt(certificate.getIssuedAt().plusYears(1));
-        certificate.setLicenseNumber(generateId(3,10));
-        certificate.setCertificateData(certificateData);
         certificateRepository.save(certificate);
+    }
+
+    public List<CertsResponseDto> getAllActiveCrewCerts() {
+        return getCertificatesByFilter(
+                data -> data.getCrew() != null,
+                cert -> cert.getExpiresAt().isAfter(LocalDate.now()),
+                data -> data.getCrew().getProfile().getEmail()
+        );
+    }
+
+    public List<CertsResponseDto> getAllExpiredCrewCerts() {
+        return getCertificatesByFilter(
+                data -> data.getCrew() != null,
+                cert -> cert.getExpiresAt().isBefore(LocalDate.now()),
+                data -> data.getCrew().getProfile().getEmail()
+        );
+    }
+
+    public List<CertsResponseDto> getAllActivePilotCerts() {
+        return getCertificatesByFilter(
+                data -> data.getPilot() != null,
+                cert -> cert.getExpiresAt().isAfter(LocalDate.now()),
+                data -> data.getPilot().getProfile().getEmail()
+        );
+    }
+
+    public List<CertsResponseDto> getAllExpiredPilotCerts() {
+        return getCertificatesByFilter(
+                data -> data.getPilot() != null,
+                cert -> cert.getExpiresAt().isBefore(LocalDate.now()),
+                data -> data.getPilot().getProfile().getEmail()
+        );
+    }
+
+    private List<CertsResponseDto> getCertificatesByFilter(
+            Predicate<CertificateData> certificateDataFilter,
+            Predicate<Certificate> expiryFilter,
+            Function<CertificateData, String> emailExtractor) {
+        return certificateRepository
+                .findAll()
+                .stream()
+                .filter(cert -> {
+                    var data = cert.getCertificateData();
+                    return data != null && certificateDataFilter.test(data);
+                })
+                .filter(expiryFilter)
+                .map(cert -> {
+                    var data = certDataRepository
+                            .findById(cert.getCertificateData()
+                                    .getId())
+                            .orElseThrow();
+                    return new CertsResponseDto(
+                            emailExtractor.apply(data),
+                            cert.getCertType(),
+                            cert.getCertCat(),
+                            cert.getCertAuthority(),
+                            cert.getIssuedAt(),
+                            cert.getExpiresAt(),
+                            cert.getLicenseNumber()
+                    );
+                })
+                .toList();
+    }
+
+    public CertificateData getCertData(Long certDataId) {
+        return certDataRepository.findById(certDataId).orElseThrow();
     }
 }
