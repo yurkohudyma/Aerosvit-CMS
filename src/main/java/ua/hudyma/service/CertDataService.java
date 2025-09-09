@@ -3,6 +3,7 @@ package ua.hudyma.service;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Service;
+import ua.hudyma.domain.certify.AircraftType;
 import ua.hudyma.domain.certify.Certificate;
 import ua.hudyma.domain.certify.CertificateData;
 import ua.hudyma.domain.profile.Crew;
@@ -13,10 +14,7 @@ import ua.hudyma.repository.CrewRepository;
 import ua.hudyma.repository.PilotRepository;
 
 import java.util.List;
-import java.util.function.BiConsumer;
-import java.util.function.Consumer;
-import java.util.function.Function;
-import java.util.function.Supplier;
+import java.util.function.*;
 
 @Service
 @Log4j2
@@ -34,8 +32,8 @@ public class CertDataService {
             BiConsumer<T, CertificateData> setOwnerFn,
             Consumer<List<T>> saveAllFn) {
         var list = findAllFn.get();
-        for (T item: list){
-            if (getCertDataFn.apply(item) == null){
+        for (T item : list) {
+            if (getCertDataFn.apply(item) == null) {
                 var certData = new CertificateData();
                 setOwnerFn.accept(item, certData);
                 setCertDataFn.accept(item, certData);
@@ -63,4 +61,6 @@ public class CertDataService {
                 pilotRepository::saveAll
         );
     }
+
+
 }
