@@ -11,6 +11,6 @@ public enum CrewType {
     OBS,        // Observer
     SA,         // Safety Auditor / Safety Assessor
     DE,         // Duty Examiner or Designated Examiner
-    TRAINEE     // Cabin Crew Trainee
+    SC_CSD, TRAINEE     // Cabin Crew Trainee
 }
 

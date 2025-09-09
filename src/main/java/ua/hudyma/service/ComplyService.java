@@ -4,9 +4,9 @@ package ua.hudyma.service;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Service;
-import ua.hudyma.domain.certify.AircraftType;
 import ua.hudyma.domain.compliance.Dto.CrewCompileResultDto;
 import ua.hudyma.domain.compliance.Dto.CrewCompileRequestDto;
+import ua.hudyma.domain.profile.Crew;
 import ua.hudyma.domain.profile.Pilot;
 
 import java.util.List;
@@ -16,40 +16,56 @@ import java.util.List;
 @Log4j2
 public class ComplyService {
     private final PilotService pilotService;
-    private final VisaService visaService;
-    private final CertDataService certDataService;
-    private final TravelDataService travelDataService;
-    public List<CrewCompileResultDto> compileCrewForFlight(CrewCompileRequestDto crewCompileRequestDto) {
-        //todo discover captain from CPT/TRI/TRE/LTC/DE
-        var aircraftType = crewCompileRequestDto.aircraftType();
-        var cptList = pilotService.findCaptain(aircraftType);
+    private final CrewService crewService;
 
+    public List<CrewCompileResultDto> compileCrewForFlight(
+            CrewCompileRequestDto crewCompileRequestDto) {
+        var aircraftType = crewCompileRequestDto
+                .aircraftType();
+        var cptList = pilotService
+                .findPilot(aircraftType, true);
         var pilotsQuantity = aircraftType.getMaxPilots();
+
+        var secondPilotList = pilotService
+                .findPilot (aircraftType, false);
+
+        var thirdPilot = pilotsQuantity > 2 && cptList.size() > 1
+                ? cptList.get(1)
+                : new Pilot();
         var crewQuantity = aircraftType.getMaxCabinCrew();
-        //todo check certs/medical
 
-        //todo discover 2nd pilot from FO/SFO/SO/RO
-        //todo check certs/medical
-        Pilot pilot3rd;
-        if (pilotsQuantity > 2 && cptList.size() > 1){
-            pilot3rd = cptList.get(1);
-        }
+        var purserList = crewService
+                .findCrew (aircraftType, true);
 
-        //todo discover purser from PUR/IFM/TRI/LCC/SCC/SC_CSD
-        //todo check certs/medical
+        var secondPilot = !secondPilotList.isEmpty()
+                ? secondPilotList.get(0) : new Pilot();
+        var purser = !purserList.isEmpty()
+                ? purserList.get(0) : new Crew();
 
-        //todo discover cabincrew from CC/SCC/OBS/TRAINEE
+        var flightAttList = crewService
+                .findCrew(aircraftType, false);
+        var flightAttendantIdList  = flightAttList
+                .stream()
+                .map(Crew::getId)
+                .toList();
+        var flightAttendantCrewTypesList = flightAttList
+                .stream()
+                .map(Crew::getCrewType)
+                .toList();
+
         return cptList
                 .stream()
                 .map(cpt -> new CrewCompileResultDto(
-                cpt.getId(),
-                cpt.getPilotType(),
-                null,
-                null,
-                null,
-                null,
-                null,
-                null))
+                        cpt.getId(),
+                        cpt.getPilotType(),
+                        secondPilot.getId(),
+                        secondPilot.getPilotType(),
+                        thirdPilot.getId(),
+                        thirdPilot.getPilotType(),
+                        purser.getId(),
+                        purser.getCrewType(),
+                        flightAttendantIdList,
+                        flightAttendantCrewTypesList))
                 .toList();
     }
 }

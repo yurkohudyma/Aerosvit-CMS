@@ -6,16 +6,13 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Service;
 import ua.hudyma.domain.certify.AircraftType;
-import ua.hudyma.domain.certify.Certificate;
 import ua.hudyma.domain.profile.Address;
 import ua.hudyma.domain.profile.Pilot;
 import ua.hudyma.domain.profile.PilotType;
 import ua.hudyma.domain.profile.Profile;
 import ua.hudyma.enums.Country;
-import ua.hudyma.repository.CertificateRepository;
 import ua.hudyma.repository.PilotRepository;
 
-import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
 import java.util.function.Predicate;
@@ -29,17 +26,17 @@ import static ua.hudyma.util.IdGenerator.getRandomEnum;
 @Log4j2
 public class PilotService {
     private final PilotRepository pilotRepository;
-    private final CertDataService certDataService;
 
-    public List<Pilot> findCaptain(AircraftType aircraftType) {
-        return Stream.of(CPT, TRI, TRE, LTC, DE)
-                .map(pilotRepository::findByPilotType)
-                .map(list -> list.stream()
-                        .filter(hasJetCompliance(aircraftType))
-                        .toList())
-                .filter(filteredList -> !filteredList.isEmpty())
-                .findFirst()
-                .orElse(Collections.emptyList());
+    public List<Pilot> findPilot(AircraftType aircraftType, boolean shallSeekCpt) {
+        var pilotTypeArray = shallSeekCpt ?
+                new PilotType[]{CPT, TRI, TRE, LTC, DE} :
+                new PilotType[] {FO, SFO, SO, RO};
+        return Stream.of(pilotTypeArray)
+                .flatMap(type -> pilotRepository
+                        .findByPilotType(type)
+                        .stream())
+                .filter(hasJetCompliance(aircraftType))
+                .toList();
     }
 
     public Predicate<Pilot> hasJetCompliance(AircraftType aircraftType) {

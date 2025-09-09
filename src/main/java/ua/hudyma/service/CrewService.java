@@ -5,16 +5,17 @@ import com.devskiller.jfairy.producer.person.Person;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Service;
-import ua.hudyma.domain.profile.Address;
-import ua.hudyma.domain.profile.Crew;
-import ua.hudyma.domain.profile.CrewType;
-import ua.hudyma.domain.profile.Profile;
+import ua.hudyma.domain.certify.AircraftType;
+import ua.hudyma.domain.profile.*;
 import ua.hudyma.enums.Country;
 import ua.hudyma.repository.CrewRepository;
 
+import java.util.List;
 import java.util.Locale;
+import java.util.function.Predicate;
 import java.util.stream.Stream;
 
+import static ua.hudyma.domain.profile.CrewType.*;
 import static ua.hudyma.util.IdGenerator.getRandomEnum;
 
 @Service
@@ -22,6 +23,28 @@ import static ua.hudyma.util.IdGenerator.getRandomEnum;
 @Log4j2
 public class CrewService {
     private final CrewRepository crewRepository;
+    private final PilotService pilotService;
+
+    public List<Crew> findCrew(AircraftType aircraftType, boolean shallSeekPurser) {
+        var crewTypeArray = shallSeekPurser ?
+                new CrewType[]{PUR, IFM, TRI, LCC, SCC, SC_CSD} :
+                new CrewType[]{CC, SCC, OBS, TRAINEE};
+        return Stream.of(crewTypeArray)
+                .flatMap(type -> crewRepository
+                        .findByCrewType(type).stream())
+                .filter(hasJetCompliance(aircraftType))
+                .toList();
+    }
+
+    public Predicate<Crew> hasJetCompliance(AircraftType aircraftType) {
+        return crew ->
+                crew.getCertificateData()
+                        .getCertificateList()
+                        .stream()
+                        .anyMatch(cert -> cert.getAircraftType()
+                                == aircraftType);
+
+    }
 
     public void generateCrew(Integer number) {
         var list = Stream
@@ -31,10 +54,10 @@ public class CrewService {
         crewRepository.saveAll(list);
     }
 
-    private static Crew create (){
+    private static Crew create() {
         var fairy = Fairy.create(Locale.forLanguageTag("uk"));
         var genPerson = fairy.person();
-        return populateCrewFields (genPerson);
+        return populateCrewFields(genPerson);
     }
 
     private static Crew populateCrewFields(Person genPerson) {
