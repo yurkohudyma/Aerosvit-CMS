@@ -13,6 +13,7 @@ public enum PilotType {
     DE,         // Deputy Examiner / Designated Examiner – Заступник або уповноважений екзаменатор
     OBS,        // Observer – Спостерігач (не виконує політ, спостерігає за екіпажем)
     SA,         // Safety Auditor / Safety Analyst – Спеціаліст із безпеки (може проводити аудит з безпеки)
-    TRAINEE     // Trainee – Стажер, який ще навчається
+    TRAINEE,     // Trainee – Стажер, який ще навчається
+    NA
 }
 

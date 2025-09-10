@@ -23,7 +23,6 @@ import static ua.hudyma.util.IdGenerator.getRandomEnum;
 @Log4j2
 public class CrewService {
     private final CrewRepository crewRepository;
-    private final PilotService pilotService;
 
     public List<Crew> findCrew(AircraftType aircraftType, boolean shallSeekPurser) {
         var crewTypeArray = shallSeekPurser ?
@@ -43,7 +42,6 @@ public class CrewService {
                         .stream()
                         .anyMatch(cert -> cert.getAircraftType()
                                 == aircraftType);
-
     }
 
     public void generateCrew(Integer number) {
