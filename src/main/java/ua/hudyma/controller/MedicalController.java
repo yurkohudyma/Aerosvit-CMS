@@ -10,6 +10,7 @@ import ua.hudyma.domain.certify.dto.CertsResponseDto;
 import ua.hudyma.service.MedicalService;
 
 import java.util.List;
+import java.util.Set;
 
 @RestController
 @RequiredArgsConstructor
@@ -27,4 +28,13 @@ public class MedicalController {
     public ResponseEntity<List<String>> getMissingMedicalsForAll (){
         return ResponseEntity.ok(medicalService.findCrewWithMissingMedicals());
     }
+
+    @Deprecated
+    @GetMapping("/missing2")
+    public ResponseEntity<Set<String>> getMissingMedicalsForAllNoStream (){
+        return ResponseEntity.ok(medicalService.findCrewEmailsWithMissingMedicals());
+    }
+
+    //todo implement expired certs reissuance
+    //todo implement missing certs emission
 }

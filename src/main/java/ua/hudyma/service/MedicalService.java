@@ -5,16 +5,17 @@ import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Service;
 import ua.hudyma.domain.certify.Certificate;
 import ua.hudyma.domain.certify.CertificateData;
-import ua.hudyma.domain.certify.CertificateType;
 import ua.hudyma.domain.certify.dto.CertsResponseDto;
-import ua.hudyma.domain.profile.Profile;
+import ua.hudyma.domain.profile.Crew;
+import ua.hudyma.domain.profile.Pilot;
 import ua.hudyma.repository.CertDataRepository;
 import ua.hudyma.repository.CertificateRepository;
+import ua.hudyma.repository.CrewRepository;
+import ua.hudyma.repository.PilotRepository;
 
 import java.util.*;
 import java.util.function.Function;
 import java.util.function.Predicate;
-import java.util.stream.Stream;
 
 import static java.time.LocalDate.now;
 import static ua.hudyma.domain.certify.CertificateType.MEDICAL;
@@ -26,6 +27,8 @@ public class MedicalService {
     private final CertDataRepository certDataRepository;
     private final CertificateRepository certificateRepository;
     private final CertificateService certificateService;
+    private final CrewRepository crewRepository;
+    private final PilotRepository pilotRepository;
 
     public List<String> findCrewWithMissingMedicals() {
         return certDataRepository
@@ -34,7 +37,7 @@ public class MedicalService {
                 .filter(cd -> cd
                         .getCertificateList()
                         .stream()
-                        .noneMatch(c -> c.getCertType() == CertificateType.MEDICAL))
+                        .noneMatch(c -> c.getCertType() == MEDICAL))
                 .flatMap(cd -> {
                     var emails = new ArrayList<String>();
                     if (cd.getPilot() != null) {
@@ -51,8 +54,38 @@ public class MedicalService {
                 .toList();
     }
 
-    private Predicate<Certificate> hasAnyMedical() {
-        return cert -> cert.getCertType() == MEDICAL;
+    @Deprecated
+    public Set<String> findCrewEmailsWithMissingMedicals() {
+        var crewList = crewRepository.findAll();
+        var pilotList = pilotRepository.findAll();
+        var emailsList = new HashSet<String>();
+        for (Crew crew : crewList) {
+            var crewCertList = crew.getCertificateData().getCertificateList();
+            var certfound = false;
+            for (Certificate cert : crewCertList) {
+                if (isCertMedical(cert)) {
+                    certfound = true;
+                    break;
+                }
+            }
+            if (!certfound) emailsList.add(crew.getProfile().getEmail());
+        }
+        for (Pilot pilot : pilotList) {
+            var pilotCertList = pilot.getCertificateData().getCertificateList();
+            var certfound = false;
+            for (Certificate cert : pilotCertList) {
+                if (isCertMedical(cert)) {
+                    certfound = true;
+                    break;
+                }
+            }
+            if (!certfound) emailsList.add(pilot.getProfile().getEmail());
+        }
+        return emailsList;
+    }
+
+    private boolean isCertMedical(Certificate cert) {
+        return cert.getCertType() == MEDICAL;
     }
 
     public List<CertsResponseDto> findExpiredMedicals() {
