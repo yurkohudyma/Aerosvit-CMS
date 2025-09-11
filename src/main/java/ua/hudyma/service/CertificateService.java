@@ -79,18 +79,18 @@ public class CertificateService {
         );
     }
 
-    private List<CertsResponseDto> getCertificatesByFilter(
-            Predicate<CertificateData> certificateDataFilter,
-            Predicate<Certificate> expiryFilter,
+    public List<CertsResponseDto> getCertificatesByFilter(
+            Predicate<CertificateData> entityAvailableFilter,
+            Predicate<Certificate> certConditionsFilter,
             Function<CertificateData, String> emailExtractor) {
         return certificateRepository
                 .findAll()
                 .stream()
                 .filter(cert -> {
                     var data = cert.getCertificateData();
-                    return data != null && certificateDataFilter.test(data);
+                    return data != null && entityAvailableFilter.test(data);
                 })
-                .filter(expiryFilter)
+                .filter(certConditionsFilter)
                 .map(cert -> {
                     var data = certDataRepository
                             .findById(cert.getCertificateData()

@@ -30,7 +30,8 @@ public class CrewService {
                 new CrewType[]{CC, SCC, OBS, TRAINEE};
         return Stream.of(crewTypeArray)
                 .flatMap(type -> crewRepository
-                        .findByCrewType(type).stream())
+                        .findByCrewType(type)
+                        .stream())
                 .filter(hasJetCompliance(aircraftType))
                 .toList();
     }
