@@ -3,18 +3,17 @@ package ua.hudyma.service;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Service;
-import ua.hudyma.domain.certify.AircraftType;
-import ua.hudyma.domain.certify.Certificate;
 import ua.hudyma.domain.certify.CertificateData;
 import ua.hudyma.domain.profile.Crew;
 import ua.hudyma.domain.profile.Pilot;
-import ua.hudyma.repository.CertDataRepository;
-import ua.hudyma.repository.CertificateRepository;
 import ua.hudyma.repository.CrewRepository;
 import ua.hudyma.repository.PilotRepository;
 
 import java.util.List;
-import java.util.function.*;
+import java.util.function.BiConsumer;
+import java.util.function.Consumer;
+import java.util.function.Function;
+import java.util.function.Supplier;
 
 @Service
 @Log4j2
