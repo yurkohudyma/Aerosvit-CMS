@@ -3,6 +3,7 @@ package ua.hudyma.domain.profile;
 import jakarta.persistence.*;
 import lombok.Data;
 import ua.hudyma.domain.certify.CertificateData;
+import ua.hudyma.domain.training.Training;
 import ua.hudyma.domain.visa.TravelData;
 
 import static jakarta.persistence.GenerationType.IDENTITY;
@@ -28,4 +29,8 @@ public class Crew {
             cascade = CascadeType.ALL,
             fetch = FetchType.LAZY)
     private CertificateData certificateData;
+    @OneToOne(mappedBy = "crew",
+            cascade = CascadeType.ALL,
+            fetch = FetchType.LAZY)
+    private Training training;
 }
