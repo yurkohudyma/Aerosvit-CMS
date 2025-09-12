@@ -20,8 +20,6 @@ import java.util.function.*;
 @Log4j2
 @RequiredArgsConstructor
 public class CertDataService {
-    private final CertDataRepository certDataRepository;
-    private final CertificateRepository certificateRepository;
     private final PilotRepository pilotRepository;
     private final CrewRepository crewRepository;
 

@@ -7,6 +7,7 @@ import ua.hudyma.domain.certify.Certificate;
 import ua.hudyma.domain.certify.CertificateData;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface CertDataRepository extends JpaRepository<CertificateData, Long> {
@@ -41,4 +42,8 @@ public interface CertDataRepository extends JpaRepository<CertificateData, Long>
                         
             """, nativeQuery = true)
     List<String> findAllCrewEmailsWithMissingMedicals();
+
+    Optional<CertificateData> findByCrewId(Long personId);
+
+    Optional<CertificateData> findByPilotId(Long personId);
 }

@@ -14,6 +14,7 @@ import ua.hudyma.repository.CrewRepository;
 import ua.hudyma.repository.PilotRepository;
 
 import java.util.*;
+import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Predicate;
 
@@ -103,10 +104,18 @@ public class MedicalService {
         return data ->
                 Optional.ofNullable(data.getPilot())
                         .map(pilot ->
-                                pilot.getCertificateData().getPilot().getProfile().getEmail())
+                                pilot
+                                        .getCertificateData()
+                                        .getPilot()
+                                        .getProfile()
+                                        .getEmail())
                         .or(() -> Optional.ofNullable(data.getCrew())
                                 .map(crew ->
-                                        crew.getCertificateData().getCrew().getProfile().getEmail()))
+                                        crew
+                                                .getCertificateData()
+                                                .getCrew()
+                                                .getProfile()
+                                                .getEmail()))
                         .orElse(null);
     }
 

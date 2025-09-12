@@ -35,6 +35,5 @@ public class MedicalController {
         return ResponseEntity.ok(medicalService.findCrewEmailsWithMissingMedicals());
     }
 
-    //todo implement expired certs reissuance
     //todo implement missing certs emission
 }
