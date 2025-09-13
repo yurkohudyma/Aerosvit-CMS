@@ -4,13 +4,11 @@ package ua.hudyma.service;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Service;
-import ua.hudyma.domain.compliance.Dto.CrewCompileResultDto;
 import ua.hudyma.domain.compliance.Dto.CrewCompileRequestDto;
+import ua.hudyma.domain.compliance.Dto.CrewCompileResultDto;
 import ua.hudyma.domain.profile.Crew;
 import ua.hudyma.domain.profile.Pilot;
-import ua.hudyma.domain.profile.PilotType;
 
-import java.util.Collections;
 import java.util.List;
 
 import static ua.hudyma.domain.profile.PilotType.NA;

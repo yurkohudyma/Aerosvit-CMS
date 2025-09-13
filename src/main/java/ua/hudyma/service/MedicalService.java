@@ -26,7 +26,6 @@ import static ua.hudyma.domain.certify.CertificateType.MEDICAL;
 @Service
 public class MedicalService {
     private final CertDataRepository certDataRepository;
-    private final CertificateRepository certificateRepository;
     private final CertificateService certificateService;
     private final CrewRepository crewRepository;
     private final PilotRepository pilotRepository;
@@ -61,7 +60,9 @@ public class MedicalService {
         var pilotList = pilotRepository.findAll();
         var emailsList = new HashSet<String>();
         for (Crew crew : crewList) {
-            var crewCertList = crew.getCertificateData().getCertificateList();
+            var crewCertList = crew
+                    .getCertificateData()
+                    .getCertificateList();
             var certfound = false;
             for (Certificate cert : crewCertList) {
                 if (isCertMedical(cert)) {
@@ -69,10 +70,13 @@ public class MedicalService {
                     break;
                 }
             }
-            if (!certfound) emailsList.add(crew.getProfile().getEmail());
+            if (!certfound) emailsList
+                    .add(crew.getProfile().getEmail());
         }
         for (Pilot pilot : pilotList) {
-            var pilotCertList = pilot.getCertificateData().getCertificateList();
+            var pilotCertList = pilot
+                    .getCertificateData()
+                    .getCertificateList();
             var certfound = false;
             for (Certificate cert : pilotCertList) {
                 if (isCertMedical(cert)) {
@@ -80,7 +84,8 @@ public class MedicalService {
                     break;
                 }
             }
-            if (!certfound) emailsList.add(pilot.getProfile().getEmail());
+            if (!certfound) emailsList
+                    .add(pilot.getProfile().getEmail());
         }
         return emailsList;
     }

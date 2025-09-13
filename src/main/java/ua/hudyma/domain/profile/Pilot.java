@@ -6,6 +6,8 @@ import ua.hudyma.domain.certify.CertificateData;
 import ua.hudyma.domain.training.Training;
 import ua.hudyma.domain.visa.TravelData;
 
+import java.util.List;
+
 import static jakarta.persistence.GenerationType.IDENTITY;
 
 @Entity
@@ -29,9 +31,9 @@ public class Pilot {
             cascade = CascadeType.ALL,
             fetch = FetchType.LAZY)
     private CertificateData certificateData;
-    @OneToOne(mappedBy = "pilot",
+    @OneToMany(mappedBy = "pilot",
             cascade = CascadeType.ALL,
-            fetch = FetchType.LAZY)
-    private Training training;
+            fetch = FetchType.EAGER)
+    private List<Training> trainingList;
 
 }

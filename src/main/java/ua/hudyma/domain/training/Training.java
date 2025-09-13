@@ -1,11 +1,13 @@
 package ua.hudyma.domain.training;
 
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 import ua.hudyma.domain.certify.AircraftType;
-import ua.hudyma.domain.certify.CertifyAuthority;
 import ua.hudyma.domain.profile.Crew;
 import ua.hudyma.domain.profile.Pilot;
 import ua.hudyma.domain.training.enums.TrainingAuthority;
@@ -19,6 +21,9 @@ import static jakarta.persistence.GenerationType.IDENTITY;
 @Entity
 @Table(name = "trainings")
 @Data
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
 public class Training {
     @Id
     @GeneratedValue(strategy = IDENTITY)

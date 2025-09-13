@@ -29,8 +29,6 @@ public class CertificateController {
         return ResponseEntity.ok(certificateService.issueCertWhenMissing (personId, type));
     }
 
-
-
     @GetMapping
     public ResponseEntity<String> generateCertWhereMissing (){
         certificateService.addCertificatesForAllWhereMissingAtLeastOne();
