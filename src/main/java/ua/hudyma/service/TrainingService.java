@@ -3,6 +3,7 @@ package ua.hudyma.service;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import ua.hudyma.domain.certify.AircraftType;
 import ua.hudyma.domain.profile.Crew;
 import ua.hudyma.domain.profile.Pilot;
@@ -65,6 +66,23 @@ public class TrainingService {
                 .toList();
     }
 
+    public void generateTrainingWhereasCrewHasNone(CrewRole role) {
+        if (role == PILOT) {
+            pilotRepository
+                    .findAll()
+                    .stream()
+                    .filter(pilot -> pilot.getTrainingList().isEmpty())
+                    .forEach(this::generateTraining);
+        }
+        else {
+            crewRepository
+                    .findAll()
+                    .stream()
+                    .filter(crew -> crew.getTrainingList().isEmpty())
+                    .forEach(this::generateTraining);
+        }
+    }
+
     private Long getCrewMemberId(Training training) {
         return training.getCrew() != null ?
                 training.getCrew().getId() :
@@ -84,7 +102,17 @@ public class TrainingService {
             log.error("Training Type is Compulsory, not provided");
             throw new IllegalArgumentException();
         }
-        var training = Training
+        var training = generateTrainingByType(trainingType);
+        if (role == CREW) {
+            training.setCrew((Crew) person.get());
+        } else {
+            training.setPilot((Pilot) person.get());
+        }
+        return trainingRepository.save(training);
+    }
+
+    private Training generateTrainingByType(TrainingType trainingType) {
+        return Training
                 .builder()
                 .trainingAuthority(getRandomEnum(TrainingAuthority.class))
                 .aircraftType(getRandomEnum(AircraftType.class))
@@ -94,11 +122,32 @@ public class TrainingService {
                 .expiresOn(LocalDate.now().plusYears(1))
                 .trainingType(trainingType)
                 .build();
-        if (role == CREW) {
-            training.setCrew((Crew) person.get());
-        } else {
-            training.setPilot((Pilot) person.get());
+    }
+
+    @Transactional
+    private Training generateTraining(Object crewMember) {
+        Pilot pilot;
+        Crew crew;
+        if (crewMember instanceof Pilot) {
+            pilot = (Pilot) crewMember;
+            crew = null;
         }
+        else {
+            crew = (Crew) crewMember;
+            pilot = null;
+        }
+        var training = Training
+                .builder()
+                .trainingAuthority(getRandomEnum(TrainingAuthority.class))
+                .aircraftType(getRandomEnum(AircraftType.class))
+                .certificateId(generateId(3, 12))
+                .createdOn(now())
+                .issuedOn(LocalDate.now())
+                .expiresOn(LocalDate.now().plusYears(1))
+                .trainingType(getRandomEnum(TrainingType.class))
+                .pilot(pilot)
+                .crew(crew)
+                .build();
         return trainingRepository.save(training);
     }
 

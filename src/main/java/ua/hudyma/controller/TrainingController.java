@@ -2,6 +2,7 @@ package ua.hudyma.controller;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
+import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -14,6 +15,8 @@ import ua.hudyma.domain.training.enums.TrainingType;
 import ua.hudyma.service.TrainingService;
 
 import java.util.List;
+
+import static org.springframework.http.HttpStatus.CREATED;
 
 @RestController
 @RequestMapping("/training")
@@ -33,5 +36,11 @@ public class TrainingController {
     public ResponseEntity<List<MissingTrainingResponseDto>> getAllWithMissingTrainingType(
             @RequestParam TrainingType type) {
         return ResponseEntity.ok(trainingService.findAllCrewMemberWithMissingTraining(type));
+    }
+
+    @GetMapping("/createTrainingWhereNone")
+    public ResponseEntity<String> generateRandomTrainingWhereCrewHasNone (@RequestParam CrewRole role){
+        trainingService.generateTrainingWhereasCrewHasNone(role);
+        return ResponseEntity.status(CREATED).build();
     }
 }

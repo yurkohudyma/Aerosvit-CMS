@@ -33,6 +33,6 @@ public class Crew {
     private CertificateData certificateData;
     @OneToMany(mappedBy = "crew",
             cascade = CascadeType.ALL,
-            fetch = FetchType.LAZY)
+            fetch = FetchType.EAGER)
     private List<Training> trainingList;
 }
